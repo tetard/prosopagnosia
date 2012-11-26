@@ -56,7 +56,7 @@ void DynamicInput::setType(DynamicInput::Type type)
      _inputCamera.reset();
      _inputSyphon.reset(new ofxSyphonClient);
      _inputSyphon->setup();
-     _inputSyphon->setServerName("input-camera");
+     _inputSyphon->setServerName("cam-input");
      break;
    }
 

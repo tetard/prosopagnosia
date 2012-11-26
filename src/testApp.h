@@ -4,6 +4,7 @@
 #include "ofxCv.h"
 #include "ofxFaceTracker.h"
 #include "DynamicInput.h"
+#include "ofxSyphonServer.h"
 
 
 class testApp : public ofBaseApp {
@@ -30,6 +31,8 @@ public:
 
 	ofxFaceTracker dstTracker;
 	ofFbo dstNormalized, dstBlur;
+    
+    ofxSyphonServer Face;
 	
 	ofxFaceTracker srcTracker;
 	ofImage src;

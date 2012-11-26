@@ -155,6 +155,8 @@ void testApp::setup() {
     grimaceDirectory.allowExt("png");
     grimaceDirectory.listDir("grimaces");
 	grimaceDirectory.sort();
+    
+    Face.setName("P");
 
 	faces.resize(5);
 	for(int i = 0; i < 5; i++) {
@@ -273,6 +275,8 @@ void testApp::draw() {
 	ofDisableAlphaBlending();
 	
 	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);
+    
+    Face.publishScreen();
 }
 
 void testApp::keyPressed(int key) {
