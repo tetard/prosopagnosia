@@ -46,8 +46,14 @@ void testApp::drawNormalized(ofxFaceTracker& tracker, ofBaseHasTexture& tex, ofF
 }
 
 void testApp::maskBlur(ofBaseHasTexture& tex, ofFbo& result) {
-	int k = ofMap(mouseX, 0, ofGetWidth(), 1, 128, true);
-	
+	int k = ofMap(640, 0, ofGetWidth(), 1, 128, true);
+
+    
+    //    bypass the mouse blur
+//    int k = ofMap(mouseX, 0, ofGetWidth(), 1, 128, true);
+
+    
+    
 	halfMaskBlur.begin();
 	ofClear(0, 0);
 	maskBlurShader.begin();
@@ -119,7 +125,7 @@ void testApp::setup() {
 	blurAlphaShader.load("", "BlurAlpha.frag");
 	voronoiShader.load("", "Voronoi.frag");
 	
-	input.init(1280, 720);
+	input.init(640, 480);
 	input.setType(DynamicInput::Camera);
 
     srcTracker.setup();
@@ -256,9 +262,10 @@ void testApp::update() {
 }
 
 void testApp::draw() {
-	ofEnableAlphaBlending();
 	
 	ofSetColor(255);
+    ofEnableAlphaBlending();
+
 	input.draw(0, 0);
 	cloned.draw(0, 0);
 	if(debug) {
@@ -272,9 +279,9 @@ void testApp::draw() {
 		ofPopMatrix();
 	}
 	
-	ofDisableAlphaBlending();
+//	ofDisableAlphaBlending();
 	
-	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);
+//	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);
     
     Face.publishScreen();
 }

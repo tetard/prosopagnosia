@@ -25,7 +25,7 @@ public:
 	static const int normalizedHeight = 256;
 	
 	// this (approximately) makes the mesh hit the edges of the fbos
-	static const float normalizedMeshScale = 1400;
+    const float normalizedMeshScale = 1400;
 	
 	DynamicInput input;
 
