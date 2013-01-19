@@ -327,5 +327,12 @@ void testApp::keyPressed(int key) {
 	if(key == 'i') {
         input.toggle();
 	}
+<<<<<<< HEAD
 #endif
+=======
+
+    if(key == ' ') {
+    dstTracker.reset();
+    }
+>>>>>>> added tracker reset
 }
