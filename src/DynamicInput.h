@@ -15,39 +15,39 @@
 
 class DynamicInput : public ofBaseHasTexture
 {
- public:
-  ~DynamicInput() {};
-  virtual ofTexture & getTextureReference();
-  virtual void setUseTexture(bool bUseTex);
+public:
+    ~DynamicInput() {}
+    virtual ofTexture &getTextureReference();
+    virtual void setUseTexture(bool bUseTex);
 
-  enum _Type {
-    Camera,
-    Syphon
-  };
+    enum _Type {
+        Camera,
+        Syphon
+    };
 
-  typedef enum _Type Type;
+    typedef enum _Type Type;
 
-  void init(float width, float height);
+    void init(float width, float height);
 
-  void toggle();
-  void setType(Type type);
-  Type getType() const;
+    void toggle();
+    void setType(Type type);
+    Type getType() const;
 
-  float getWidth();
-  float getHeight();
+    float getWidth();
+    float getHeight();
 
-  void update();
-  bool isFrameNew();
+    void update();
+    bool isFrameNew();
 
-  void draw(float x, float y);
-  ofPixels const& getPixels();
+    void draw(float x, float y);
+    ofPixelsRef getPixelsRef();
 
- private:
-  Type _type;
-  ofFbo _framebuffer;
-  ofPixels _pixels;
-  ofPtr<ofVideoGrabber> _inputCamera;
-  ofPtr<ofxSyphonClient> _inputSyphon;
+private:
+    Type _type;
+    ofFbo _framebuffer;
+    ofPixels _pixels;
+    ofPtr<ofVideoGrabber> _inputCamera;
+    ofPtr<ofxSyphonClient> _inputSyphon;
 };
 
 #endif /* defined(__Prosopagnosia__DynamicInput__) */

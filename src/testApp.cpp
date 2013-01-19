@@ -48,12 +48,12 @@ void testApp::drawNormalized(ofxFaceTracker& tracker, ofBaseHasTexture& tex, ofF
 void testApp::maskBlur(ofBaseHasTexture& tex, ofFbo& result) {
 	int k = ofMap(640, 0, ofGetWidth(), 1, 128, true);
 
-    
-    //    bypass the mouse blur
-//    int k = ofMap(mouseX, 0, ofGetWidth(), 1, 128, true);
 
-    
-    
+    //    bypass the mouse blur
+    //    int k = ofMap(mouseX, 0, ofGetWidth(), 1, 128, true);
+
+
+
 	halfMaskBlur.begin();
 	ofClear(0, 0);
 	maskBlurShader.begin();
@@ -64,7 +64,7 @@ void testApp::maskBlur(ofBaseHasTexture& tex, ofFbo& result) {
 	tex.getTextureReference().draw(0, 0);
 	maskBlurShader.end();
 	halfMaskBlur.end();
-	
+
 	result.begin();
 	ofClear(0, 0);
 	maskBlurShader.begin();
@@ -78,7 +78,7 @@ void testApp::maskBlur(ofBaseHasTexture& tex, ofFbo& result) {
 }
 void testApp::alphaBlur(ofBaseHasTexture& tex, ofFbo& result) {
 	int k = ofMap(mouseY, 0, ofGetHeight(), 1, 25, true);
-	
+
 	halfAlphaBlur.begin();
 	ofClear(0, 0);
 	blurAlphaShader.begin();
@@ -88,7 +88,7 @@ void testApp::alphaBlur(ofBaseHasTexture& tex, ofFbo& result) {
 	tex.getTextureReference().draw(0, 0);
 	blurAlphaShader.end();
 	halfAlphaBlur.end();
-	
+
 	result.begin();
 	ofClear(0, 0);
 	blurAlphaShader.begin();
@@ -119,14 +119,19 @@ void testApp::setup() {
 #endif
 
 	ofSetVerticalSync(true);
-	
+
 	maskBlurShader.load("", "MaskBlur.frag");
 	cloneShader.load("", "Clone.frag");
 	blurAlphaShader.load("", "BlurAlpha.frag");
 	voronoiShader.load("", "Voronoi.frag");
-	
+
+#if USE_DYNAMIC_INPUT
 	input.init(640, 480);
 	input.setType(DynamicInput::Camera);
+#else
+    input.loadMovie(MOVIE_FILENAME);
+    oscReceiver.setup(OSC_INPUT_PORT);
+#endif
 
     srcTracker.setup();
 	srcTracker.setIterations(25);
@@ -142,13 +147,13 @@ void testApp::setup() {
 	srcBlur.allocate(settings);
 	dstBlur.allocate(settings);
 	faceMask.allocate(settings);
-	
+
 	settings.width = input.getWidth();
 	settings.height = input.getHeight();
 	cloned.allocate(settings);
 	halfAlphaBlur.allocate(settings);
 	final.allocate(settings);
-	
+
     faceDirectory.setShowHidden(false);
     faceDirectory.allowExt("jpg");
     faceDirectory.allowExt("jpeg");
@@ -161,7 +166,7 @@ void testApp::setup() {
     grimaceDirectory.allowExt("png");
     grimaceDirectory.listDir("grimaces");
 	grimaceDirectory.sort();
-    
+
     Face.setName("P");
 
 	faces.resize(5);
@@ -178,12 +183,30 @@ void testApp::setup() {
 	faceMask.begin();
 	drawNormalized(srcTracker);
 	faceMask.end();
-	
+
 	referenceMeanMesh = srcTracker.getMeanObjectMesh();
 	normalizeMesh(referenceMeanMesh);
-	
+
 	useVoronoi = true;
 	debug = false;
+}
+
+void testApp::receiveOSC()
+{
+	while (oscReceiver.hasWaitingMessages()) {
+		ofxOscMessage msg;
+		oscReceiver.getNextMessage(&msg);
+
+#if !USE_DYNAMIC_INPUT
+        if (msg.getAddress() == "/video_speed") {
+            float speed = msg.getArgAsFloat(0);
+            input.setSpeed(speed);
+        } else if (msg.getAddress() == "/video_volume") {
+            float volume = msg.getArgAsFloat(0);
+            input.setVolume(volume);
+        }
+#endif
+    }
 }
 
 void testApp::buildVoronoiFace() {
@@ -196,7 +219,7 @@ void testApp::buildVoronoiFace() {
 		pixels[i * 3 + 2] = 0;
 	}
 	pointsImage.update();
-	
+
 	srcNormalized.begin();
 	voronoiShader.begin();
 	voronoiShader.setUniform1i("count", faces.size());
@@ -208,7 +231,7 @@ void testApp::buildVoronoiFace() {
 	texturedRect(normalizedWidth, normalizedHeight);
 	voronoiShader.end();
 	srcNormalized.end();
-	
+
 	ofTranslate(0, normalizedHeight);
 	int y = 0, x = 0;
 	float gridScale = .5;
@@ -226,26 +249,27 @@ void testApp::buildVoronoiFace() {
 }
 
 void testApp::update() {
+    receiveOSC();
 	input.update();
 	if(input.isFrameNew()) {
-	  ofPixels pixels = input.getPixels();
+        ofPixelsRef pixels = input.getPixelsRef();
 		dstTracker.update(ofxCv::toCv(pixels));
 		drawNormalized(dstTracker, input, dstNormalized);
-		
+
 		if(useVoronoi) {
 			buildVoronoiFace();
 		}
-		
+
 		maskBlur(srcNormalized, srcBlur);
 		maskBlur(dstNormalized, dstBlur);
-		
+
 		ofMesh dstMesh = dstTracker.getImageMesh();
 		dstMesh.clearTexCoords();
 		vector<ofVec3f>& vertices = referenceMeanMesh.getVertices();
 		for(int i = 0; i < vertices.size(); i++) {
 			dstMesh.addTexCoord(ofVec2f(vertices[i].x, vertices[i].y));
 		}
-		
+
 		cloned.begin();
 		ofClear(0, 0);
 		cloneShader.begin();
@@ -255,14 +279,14 @@ void testApp::update() {
 		dstMesh.draw();
 		cloneShader.end();
 		cloned.end();
-		
+
 		// alpha blur causes black fringes right now..
 		//alphaBlur(cloned, final);
 	}
 }
 
 void testApp::draw() {
-	
+
 	ofSetColor(255);
     ofEnableAlphaBlending();
 
@@ -278,11 +302,11 @@ void testApp::draw() {
 		dstBlur.draw(normalizedWidth, normalizedHeight);
 		ofPopMatrix();
 	}
-	
-//	ofDisableAlphaBlending();
-	
-//	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);
-    
+
+    //	ofDisableAlphaBlending();
+
+    //	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);
+
     Face.publishScreen();
 }
 
@@ -299,7 +323,9 @@ void testApp::keyPressed(int key) {
 	if(key == 'd') {
 		debug = !debug;
 	}
+#if USE_DYNAMIC_INPUT
 	if(key == 'i') {
-	  input.toggle();
+        input.toggle();
 	}
+#endif
 }

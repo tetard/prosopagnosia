@@ -5,6 +5,12 @@
 #include "ofxFaceTracker.h"
 #include "DynamicInput.h"
 #include "ofxSyphonServer.h"
+#include "ofxOsc.h"
+
+
+#define USE_DYNAMIC_INPUT 0
+#define MOVIE_FILENAME "input.mp4"
+#define OSC_INPUT_PORT 8339
 
 
 class testApp : public ofBaseApp {
@@ -26,8 +32,15 @@ public:
 	
 	// this (approximately) makes the mesh hit the edges of the fbos
     const float normalizedMeshScale = 1400;
-	
+
+    void receiveOSC();
+    ofxOscReceiver oscReceiver;
+
+#if USE_DYNAMIC_INPUT
 	DynamicInput input;
+#else
+    ofVideoPlayer input;
+#endif
 
 	ofxFaceTracker dstTracker;
 	ofFbo dstNormalized, dstBlur;
