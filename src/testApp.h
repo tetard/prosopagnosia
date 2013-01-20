@@ -8,7 +8,8 @@
 #include "ofxOsc.h"
 
 
-#define USE_DYNAMIC_INPUT 1
+#define USE_DYNAMIC_INPUT 0
+#define FRAME_RATE 30
 #define MOVIE_FILENAME "P.MOV"
 #define OSC_INPUT_PORT 8339
 

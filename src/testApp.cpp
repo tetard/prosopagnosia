@@ -225,9 +225,11 @@ void testApp::receiveOSC()
         }
     }
 
+#if !USE_DYNAMIC_INPUT
     if (nextFrame > -1) {
         input.setFrame(nextFrame);
     }
+#endif
 }
 
 void testApp::buildVoronoiFace() {
