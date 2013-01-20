@@ -44,9 +44,9 @@ public:
 #endif
 
 	ofxFaceTracker dstTracker;
-	ofFbo dstNormalized, dstBlur;
+	ofFbo dstNormalized, dstBlur, output;
     
-    ofxSyphonServer Face;
+    ofxSyphonServer syphonOutput;
 	
 	ofxFaceTracker srcTracker;
 	ofImage src;
