@@ -217,7 +217,7 @@ void testApp::receiveOSC()
             float position = msg.getArgAsFloat(0);
             int totalNumFrames = 0;
             totalNumFrames = input.getTotalNumFrames();
-            nextFrame = position * totalNumFrames;
+            nextFrame = position * totalNumFrames - 1;
         }
 #endif
         if (msg.getAddress() == "/reset") {
