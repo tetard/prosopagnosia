@@ -9,7 +9,8 @@
 
 
 #define USE_DYNAMIC_INPUT 0
-#define MOVIE_FILENAME "input.mp4"
+#define FRAME_RATE 30
+#define MOVIE_FILENAME "input.mov"
 #define OSC_INPUT_PORT 8339
 
 

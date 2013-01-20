@@ -119,6 +119,7 @@ void testApp::setup() {
 #endif
 
 	ofSetVerticalSync(true);
+    ofSetFrameRate(FRAME_RATE);
 
 	maskBlurShader.load("", "MaskBlur.frag");
 	cloneShader.load("", "Clone.frag");
@@ -130,6 +131,7 @@ void testApp::setup() {
 	input.setType(DynamicInput::Camera);
 #else
     input.loadMovie(MOVIE_FILENAME);
+//    input.play();
     oscReceiver.setup(OSC_INPUT_PORT);
 #endif
 
@@ -193,19 +195,33 @@ void testApp::setup() {
 
 void testApp::receiveOSC()
 {
+    int nextFrame = -1;
 	while (oscReceiver.hasWaitingMessages()) {
 		ofxOscMessage msg;
 		oscReceiver.getNextMessage(&msg);
 
 #if !USE_DYNAMIC_INPUT
-        if (msg.getAddress() == "/video_speed") {
+        if (msg.getAddress() == "/video/speed") {
             float speed = msg.getArgAsFloat(0);
             input.setSpeed(speed);
-        } else if (msg.getAddress() == "/video_volume") {
+        } else if (msg.getAddress() == "/video/volume") {
             float volume = msg.getArgAsFloat(0);
             input.setVolume(volume);
+        } else if (msg.getAddress() == "/video/play") {
+            input.play();
+        } else if (msg.getAddress() == "/video/stop") {
+            input.stop();
+        } else if (msg.getAddress() == "/video/position") {
+            float position = msg.getArgAsFloat(0);
+            int totalNumFrames = 0;
+            totalNumFrames = input.getTotalNumFrames();
+            nextFrame = position * totalNumFrames;
         }
 #endif
+    }
+
+    if (nextFrame > -1) {
+        input.setFrame(nextFrame);
     }
 }
 
@@ -251,38 +267,36 @@ void testApp::buildVoronoiFace() {
 void testApp::update() {
     receiveOSC();
 	input.update();
-	if(input.isFrameNew()) {
+
+    if (useVoronoi) {
         ofPixelsRef pixels = input.getPixelsRef();
-		dstTracker.update(ofxCv::toCv(pixels));
-		drawNormalized(dstTracker, input, dstNormalized);
+        dstTracker.update(ofxCv::toCv(pixels));
+        drawNormalized(dstTracker, input, dstNormalized);
 
-		if(useVoronoi) {
-			buildVoronoiFace();
-		}
+        buildVoronoiFace();
+        maskBlur(srcNormalized, srcBlur);
+        maskBlur(dstNormalized, dstBlur);
 
-		maskBlur(srcNormalized, srcBlur);
-		maskBlur(dstNormalized, dstBlur);
+        ofMesh dstMesh = dstTracker.getImageMesh();
+        dstMesh.clearTexCoords();
+        vector<ofVec3f>& vertices = referenceMeanMesh.getVertices();
+        for(int i = 0; i < vertices.size(); i++) {
+            dstMesh.addTexCoord(ofVec2f(vertices[i].x, vertices[i].y));
+        }
 
-		ofMesh dstMesh = dstTracker.getImageMesh();
-		dstMesh.clearTexCoords();
-		vector<ofVec3f>& vertices = referenceMeanMesh.getVertices();
-		for(int i = 0; i < vertices.size(); i++) {
-			dstMesh.addTexCoord(ofVec2f(vertices[i].x, vertices[i].y));
-		}
+        cloned.begin();
+        ofClear(0, 0);
+        cloneShader.begin();
+        cloneShader.setUniformTexture("src", srcNormalized, 1);
+        cloneShader.setUniformTexture("srcBlur", srcBlur, 2);
+        cloneShader.setUniformTexture("dstBlur", dstBlur, 3);
+        dstMesh.draw();
+        cloneShader.end();
+        cloned.end();
 
-		cloned.begin();
-		ofClear(0, 0);
-		cloneShader.begin();
-		cloneShader.setUniformTexture("src", srcNormalized, 1);
-		cloneShader.setUniformTexture("srcBlur", srcBlur, 2);
-		cloneShader.setUniformTexture("dstBlur", dstBlur, 3);
-		dstMesh.draw();
-		cloneShader.end();
-		cloned.end();
-
-		// alpha blur causes black fringes right now..
-		//alphaBlur(cloned, final);
-	}
+        // alpha blur causes black fringes right now..
+        //alphaBlur(cloned, final);
+    }
 }
 
 void testApp::draw() {
@@ -291,7 +305,9 @@ void testApp::draw() {
     ofEnableAlphaBlending();
 
 	input.draw(0, 0);
-	cloned.draw(0, 0);
+    if (useVoronoi) {
+        cloned.draw(0, 0);
+    }
 	if(debug) {
 		dstTracker.draw();
 		ofPushMatrix();
@@ -303,7 +319,7 @@ void testApp::draw() {
 		ofPopMatrix();
 	}
 
-    //	ofDisableAlphaBlending();
+    ofDisableAlphaBlending();
 
     //	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);
 
