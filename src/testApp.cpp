@@ -196,6 +196,8 @@ void testApp::receiveOSC()
 	while (oscReceiver.hasWaitingMessages()) {
 		ofxOscMessage msg;
 		oscReceiver.getNextMessage(&msg);
+        
+        
 
 #if !USE_DYNAMIC_INPUT
         if (msg.getAddress() == "/video_speed") {
@@ -206,7 +208,11 @@ void testApp::receiveOSC()
             input.setVolume(volume);
         }
 #endif
+        if (msg.getAddress() == "/reset") {
+            dstTracker.reset();
+        }
     }
+   
 }
 
 void testApp::buildVoronoiFace() {
@@ -323,16 +329,14 @@ void testApp::keyPressed(int key) {
 	if(key == 'd') {
 		debug = !debug;
 	}
-#if USE_DYNAMIC_INPUT
-	if(key == 'i') {
-        input.toggle();
-	}
-<<<<<<< HEAD
-#endif
-=======
 
     if(key == ' ') {
     dstTracker.reset();
     }
->>>>>>> added tracker reset
+#if USE_DYNAMIC_INPUT
+	if(key == 'i') {
+        input.toggle();
+	}
+#endif
+
 }

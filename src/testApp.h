@@ -8,8 +8,8 @@
 #include "ofxOsc.h"
 
 
-#define USE_DYNAMIC_INPUT 0
-#define MOVIE_FILENAME "input.mp4"
+#define USE_DYNAMIC_INPUT 1
+#define MOVIE_FILENAME "P.MOV"
 #define OSC_INPUT_PORT 8339
 
 
