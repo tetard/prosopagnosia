@@ -199,6 +199,8 @@ void testApp::receiveOSC()
 	while (oscReceiver.hasWaitingMessages()) {
 		ofxOscMessage msg;
 		oscReceiver.getNextMessage(&msg);
+        
+        
 
 #if !USE_DYNAMIC_INPUT
         if (msg.getAddress() == "/video/speed") {
@@ -218,6 +220,9 @@ void testApp::receiveOSC()
             nextFrame = position * totalNumFrames;
         }
 #endif
+        if (msg.getAddress() == "/reset") {
+            dstTracker.reset();
+        }
     }
 
     if (nextFrame > -1) {
@@ -339,6 +344,10 @@ void testApp::keyPressed(int key) {
 	if(key == 'd') {
 		debug = !debug;
 	}
+
+    if(key == ' ') {
+    dstTracker.reset();
+    }
 #if USE_DYNAMIC_INPUT
 	if(key == 'i') {
         input.toggle();
