@@ -45,7 +45,8 @@ public:
 #endif
 
 	ofxFaceTracker dstTracker;
-	ofFbo dstNormalized, dstBlur, output, radialBlurOutput;
+	ofFbo dstNormalized, dstBlur;
+    ofFbo output, radialBlurOutput;
 	ofShader radialBlurShader;
     ofVec2f radialBlurOrigin;
     ofVec2f radialBlurWidth;
@@ -62,7 +63,6 @@ public:
 	
 	ofShader cloneShader;
 	ofFbo cloned;
-    ofFbo output;
 	
 	ofShader blurAlphaShader;
 	ofFbo halfAlphaBlur, final;
