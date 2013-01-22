@@ -47,12 +47,8 @@ void testApp::drawNormalized(ofxFaceTracker& tracker, ofBaseHasTexture& tex, ofF
 
 void testApp::maskBlur(ofBaseHasTexture& tex, ofFbo& result) {
 	int k = 128;
-
-
     //    bypass the mouse blur
     //    int k = ofMap(mouseX, 0, ofGetWidth(), 1, 128, true);
-
-
 
 	halfMaskBlur.begin();
 	ofClear(0, 0);
@@ -76,6 +72,10 @@ void testApp::maskBlur(ofBaseHasTexture& tex, ofFbo& result) {
 	maskBlurShader.end();
 	result.end();
 }
+
+void testApp::radialBlur(ofBaseHasTexture& tex, ofFbo& result) {
+}
+
 void testApp::alphaBlur(ofBaseHasTexture& tex, ofFbo& result) {
 	int k = ofMap(mouseY, 0, ofGetHeight(), 1, 25, true);
 
@@ -125,6 +125,7 @@ void testApp::setup() {
 	cloneShader.load("", "Clone.frag");
 	blurAlphaShader.load("", "BlurAlpha.frag");
 	voronoiShader.load("", "Voronoi.frag");
+    radialBlurShader.load("", "RadialBlur.frag");
 
 #if USE_DYNAMIC_INPUT
 	input.init(640, 480);
@@ -157,7 +158,10 @@ void testApp::setup() {
 	cloned.allocate(settings);
 	halfAlphaBlur.allocate(settings);
 	final.allocate(settings);
-    output.allocate(input.getWidth(), input.getHeight());
+    output.allocate(settings);
+    radialBlurOutput.allocate(settings);
+    radialBlurOrigin = ofVec2f(0.5, 0.5);
+    radialBlurWidth = ofVec2f(0.5, 0.5);
 
     faceDirectory.setShowHidden(false);
     faceDirectory.allowExt("jpg");
@@ -219,6 +223,14 @@ void testApp::receiveOSC()
             int totalNumFrames = 0;
             totalNumFrames = input.getTotalNumFrames();
             nextFrame = position * totalNumFrames - 1;
+        } else if (msg.getAddress() == "/blur/origin") {
+            float x = msg.getArgAsFloat(0);
+            float y = msg.getArgAsFloat(1);
+            radialBlurOrigin = ofVec2f(x, y);
+        } else if (msg.getAddress() == "/blur/width") {
+            float x = msg.getArgAsFloat(0);
+            float y = msg.getArgAsFloat(1);
+            radialBlurWidth = ofVec2f(x, y);
         }
 #endif
         if (msg.getAddress() == "/reset") {
@@ -306,29 +318,34 @@ void testApp::update() {
     // alpha blur causes black fringes right now..
     //alphaBlur(cloned, final);
 
-    output.bind();
-
+    output.begin();
     ofPushMatrix();
     ofSetupScreenOrtho(output.getWidth(), output.getHeight(), OF_ORIENTATION_180, true);
     ofClear(0);
     input.draw(0, 0, output.getWidth(), output.getHeight());
     cloned.draw(0, 0, output.getWidth(), output.getHeight());
     ofPopMatrix();
+    output.end();
 
-    output.unbind();
+    radialBlurOutput.begin();
+	radialBlurShader.begin();
+	radialBlurShader.setUniform2f("origin", radialBlurOrigin.x * radialBlurOutput.getWidth(), radialBlurOrigin.y * radialBlurOutput.getHeight());
+	radialBlurShader.setUniform2f("width", radialBlurWidth.x, radialBlurWidth.y);
+    output.draw(0, 0, radialBlurOutput.getWidth(), radialBlurOutput.getHeight());
+	radialBlurShader.end();
+    radialBlurOutput.end();
 
     ofDisableAlphaBlending();
 }
 
 void testApp::draw() {
-	ofSetColor(255);
-
     ofPushMatrix();
-    ofSetupScreenOrtho(output.getWidth(), output.getHeight(), OF_ORIENTATION_180, false);
-    output.draw(0, 0, output.getWidth(), output.getHeight());
+    ofSetupScreenOrtho(radialBlurOutput.getWidth(), radialBlurOutput.getHeight(), OF_ORIENTATION_180, false);
+    radialBlurOutput.draw(0, 0, radialBlurOutput.getWidth(), radialBlurOutput.getHeight());
     ofPopMatrix();
 
 	if(debug) {
+        ofSetColor(255);
 		dstTracker.draw();
 		ofPushMatrix();
 		ofScale(.5, .5);

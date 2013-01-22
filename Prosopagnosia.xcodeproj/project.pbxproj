@@ -21,6 +21,7 @@
 		276A5A6F142A3CDF00B635EA /* BlurAlpha.frag in Sources */ = {isa = PBXBuildFile; fileRef = 276A5A6E142A3CDF00B635EA /* BlurAlpha.frag */; };
 		276A5C80142A5E1900B635EA /* Voronoi.frag in Sources */ = {isa = PBXBuildFile; fileRef = 276A5C7F142A5E1900B635EA /* Voronoi.frag */; };
 		91164D4D16636E4F00E4D751 /* DynamicInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91164D4B16636E4F00E4D751 /* DynamicInput.cpp */; };
+		914050D816AEBD86009356D3 /* RadialBlur.frag in Sources */ = {isa = PBXBuildFile; fileRef = 914050D716AEBD86009356D3 /* RadialBlur.frag */; };
 		9152190216AB0E69003000AC /* osc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 915218DB16AB0E68003000AC /* osc.a */; };
 		9152190316AB0E69003000AC /* IpEndpointName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 915218DE16AB0E68003000AC /* IpEndpointName.cpp */; };
 		9152190416AB0E69003000AC /* NetworkingUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 915218E316AB0E68003000AC /* NetworkingUtils.cpp */; };
@@ -127,6 +128,7 @@
 		276A5C7F142A5E1900B635EA /* Voronoi.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = Voronoi.frag; path = bin/data/Voronoi.frag; sourceTree = SOURCE_ROOT; };
 		91164D4B16636E4F00E4D751 /* DynamicInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicInput.cpp; sourceTree = "<group>"; };
 		91164D4C16636E4F00E4D751 /* DynamicInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicInput.h; sourceTree = "<group>"; };
+		914050D716AEBD86009356D3 /* RadialBlur.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = RadialBlur.frag; path = bin/data/RadialBlur.frag; sourceTree = SOURCE_ROOT; };
 		915218D616AB0E68003000AC /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = install.xml; sourceTree = "<group>"; };
 		915218DB16AB0E68003000AC /* osc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = osc.a; sourceTree = "<group>"; };
 		915218DE16AB0E68003000AC /* IpEndpointName.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IpEndpointName.cpp; sourceTree = "<group>"; };
@@ -913,6 +915,7 @@
 				276A5A6E142A3CDF00B635EA /* BlurAlpha.frag */,
 				276A5908142A261200B635EA /* Clone.frag */,
 				276A5857142A1CDB00B635EA /* MaskBlur.frag */,
+				914050D716AEBD86009356D3 /* RadialBlur.frag */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
@@ -1060,6 +1063,7 @@
 				9152190D16AB0E69003000AC /* ofxOscMessage.cpp in Sources */,
 				9152190E16AB0E69003000AC /* ofxOscReceiver.cpp in Sources */,
 				9152190F16AB0E69003000AC /* ofxOscSender.cpp in Sources */,
+				914050D816AEBD86009356D3 /* RadialBlur.frag in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

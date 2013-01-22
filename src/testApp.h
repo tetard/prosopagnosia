@@ -21,6 +21,7 @@ public:
 	void draw();
 	void alphaBlur(ofBaseHasTexture& tex, ofFbo& result);
 	void maskBlur(ofBaseHasTexture& tex, ofFbo& result);
+	void radialBlur(ofBaseHasTexture& tex, ofFbo& result);
 	void buildVoronoiFace();
 	void normalizeImage(ofImage& refImg, ofImage& img, ofImage& normalized);
 	void normalizeMesh(ofMesh& mesh);
@@ -44,8 +45,11 @@ public:
 #endif
 
 	ofxFaceTracker dstTracker;
-	ofFbo dstNormalized, dstBlur, output;
-    
+	ofFbo dstNormalized, dstBlur, output, radialBlurOutput;
+	ofShader radialBlurShader;
+    ofVec2f radialBlurOrigin;
+    ofVec2f radialBlurWidth;
+
     ofxSyphonServer syphonOutput;
 	
 	ofxFaceTracker srcTracker;
