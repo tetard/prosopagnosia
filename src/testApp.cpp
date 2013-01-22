@@ -48,7 +48,7 @@ void testApp::drawNormalized(ofxFaceTracker& tracker, ofBaseHasTexture& tex, ofF
 void testApp::maskBlur(ofBaseHasTexture& tex, ofFbo& result) {
 	int k = 128;
     //    bypass the mouse blur
-    //    int k = ofMap(mouseX, 0, ofGetWidth(), 1, 128, true);
+//        int k = ofMap(mouseX, 0, ofGetWidth(), 1, 128, true);
 
 	halfMaskBlur.begin();
 	ofClear(0, 0);
@@ -77,7 +77,9 @@ void testApp::radialBlur(ofBaseHasTexture& tex, ofFbo& result) {
 }
 
 void testApp::alphaBlur(ofBaseHasTexture& tex, ofFbo& result) {
-	int k = ofMap(mouseY, 0, ofGetHeight(), 1, 25, true);
+//	int k = ofMap(mouseY, 0, ofGetHeight(), 1, 25, true);
+    int k = 25;
+
 
 	halfAlphaBlur.begin();
 	ofClear(0, 0);

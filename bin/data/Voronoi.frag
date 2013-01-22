@@ -1,7 +1,7 @@
 uniform sampler2DRect points;
 uniform int count;
 const float zoom = 2.;
-const float sharpness = 20.;
+const float sharpness = 10.;
 const float eps = 1.;
 
 uniform sampler2DRect tex0, tex1, tex2, tex3, tex4;
