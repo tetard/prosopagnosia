@@ -360,7 +360,7 @@ void testApp::draw() {
         //	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);
 	}
 
-    ofTexture& texture = output.getTextureReference();
+    ofTexture& texture = radialBlurOutput.getTextureReference();
     syphonOutput.publishTexture(&texture);
 }
 
